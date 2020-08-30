@@ -19,11 +19,13 @@ from service.serializers import (
     )
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
+
 # Create your views here.
 
 
 class PlaceOrder(APIView):
-
+    @transaction.atomic
     def put(self, request, id, format=None):
         orderedBranch = data['branchId']
         #print(orderedBranch)
@@ -34,7 +36,7 @@ class PlaceOrder(APIView):
             print("orderFoodItem",orderFoodItem)
             print("orderQuantity",orderQuantity)
             try:
-                instance = FoodItem.objects.filter(branch_id=orderedBranch, id=orderFoodItem)
+                instance = FoodItem.objects.select_related('branch').filter(branch_id=orderedBranch, id=orderFoodItem)
             except FoodItem.DoesNotExist as e:
                 return Response({'error':'Given fooditem not found'},status = 404)
             print("instance[0].quantity",instance[0].quantity)
@@ -46,7 +48,7 @@ class PlaceOrder(APIView):
             print("orderQuantity",orderQuantity)
             orderFoodItem = orderItem['orderFoodItemId']
             orderQuantity = orderItem['quantity']
-            instance = FoodItem.objects.filter(branch_id=orderedBranch, id=orderFoodItem)
+            instance = FoodItem.objects.select_related('branch').filter(branch_id=orderedBranch, id=orderFoodItem)
             foodItemPrice = instance[0].price
             finalQuantity = instance[0].quantity - orderQuantity
             serializer = FoodItemSerializer(instance[0],data = {"quantity":finalQuantity},partial = True)

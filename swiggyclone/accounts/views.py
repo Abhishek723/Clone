@@ -43,7 +43,7 @@ class UpdateFoodItemView(APIView):
         is_branchOwner = request.data['is_branchOwner']
         if is_branchOwner:
             try:
-                instance = FoodItem.objects.get(id = id)
+                instance = FoodItem.objects.select_related('branch').get(id = id)
             except FoodItem.DoesNotExist as e:
                 return Response({"error":"Given Food Item is not found"},status = 404)
             finalQuantity = request.data['quantity']

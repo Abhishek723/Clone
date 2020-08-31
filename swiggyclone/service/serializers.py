@@ -3,39 +3,53 @@ from service.models import (
     Restaurent,
     Branch, 
     FoodItem, 
-    Order
+    Order,
+    OrderDiscription
     )
+
+class OrderDiscriptionSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = OrderDiscription
+        feilds = (
+                'id',
+                'price',
+                'quantity',
+                
+            )
+
 
 
 class FoodItemSerializer(serializers.ModelSerializer):
     #branch_name = serializers.CharField(source = "branch.name",read_only=True)
-
+    orderDiscriptions = OrderDiscriptionSerializers(many=True,read_only=True)
     class Meta:
         model = FoodItem
         fields = (
+                  'id',
                   'name',
                   'price',
                   'quantity',
+                  'orderDiscriptions'
                 )
 
 
 
 class OrderSerializers(serializers.ModelSerializer):
-    foodItems = FoodItemSerializer(many=True)
+    orderDiscriptions = OrderDiscriptionSerializers(many=True,read_only=True)
     class Meta:
         model = Order
         feilds = (
+                'id',
                 'order_time',
                 'total_price',
-                'quantity',
-                'foodItems'
+                'orderDiscriptions'
             )
 
-     def create(self, validated_data):
-        foodItems_data = validated_data.pop('foodItems')
+    def create(self, validated_data):
+        orderDiscriptions_data = validated_data.pop('orderDiscriptions')
         order = Order.objects.create(**validated_data)
-        for foodItem_data in foodItems_data:
-            FoodItem.objects.create(order=order, **foodItem_data)
+        for orderDiscription_data in orderDiscriptions_data:
+            OrderDiscription.objects.create(order=order, **orderDiscription_data)
         return order
 
 
@@ -45,18 +59,21 @@ class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
         fields = (
+                  'id',
                   'name',
                   'address',
                   'pincode',
                   'foodItems',
-                  'orders'
+                  'orders',
                 )
     def create(self, validated_data):
         foodItems_data = validated_data.pop('foodItems')
-        order_data = validated_data.pop('orders')
+        orders_data = validated_data.pop('orders')
         branch = Branch.objects.create(**validated_data)
         for foodItem_data in foodItems_data:
-            FoodItem.objects.create(branch=branch, **foodItem_data, ** order_data)
+            FoodItem.objects.create(branch=branch, **foodItem_data)
+        for order_data in orders_data:
+            Order.objects.create(branch=branch, ** order_data)
         return branch
                 
 class RestaurentSerializer(serializers.ModelSerializer):
@@ -65,13 +82,13 @@ class RestaurentSerializer(serializers.ModelSerializer):
         model = Restaurent
         fields = ('name',
                   'discription',
-                  'branches'
+                  'branches',
                 )
     def create(self, validated_data):
         branches_data = validated_data.pop('branches')
         restaurent = Restaurent.objects.create(**validated_data)
         for branch_data in branches_data:
-            Restaurent.objects.create(restaurent=restaurent, **branch_data)
+            Branch.objects.create(restaurent=restaurent, **branch_data)
         return restaurent
 
 

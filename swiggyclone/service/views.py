@@ -9,14 +9,16 @@ from service.models import (
     Restaurent,
     Branch, 
     FoodItem, 
-    Order
+    Order,
+    OrderDiscription
     )
 
 from service.serializers import (
     FoodItemSerializer,
     RestaurentSerializer, 
     BranchSerializer,
-    OrderSerializers
+    OrderSerializers,
+    OrderDiscriptionSerializers
     )
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
@@ -54,7 +56,6 @@ class PlaceOrder(APIView):
                 foodItemPrice = instance.first().price
                 finalQuantity = instance.first().quantity - orderQuantity
                 serializer = FoodItemSerializer(instance[0],data = {"quantity":finalQuantity},partial = True)
-                print(serializer.is_valid())
                 if serializer.is_valid():
                     serializer.save()
                     total_price = total_price + orderQuantity*foodItemPrice

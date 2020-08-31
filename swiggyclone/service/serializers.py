@@ -3,7 +3,7 @@ from service.models import (
     Restaurent,
     Branch, 
     FoodItem, 
-    Order, 
+    Order
     )
 
 
@@ -18,9 +18,30 @@ class FoodItemSerializer(serializers.ModelSerializer):
                   'quantity',
                 )
 
+
+
+class OrderSerializers(serializers.ModelSerializer):
+    foodItems = FoodItemSerializer(many=True)
+    class Meta:
+        model = Order
+        feilds = (
+                'order_time',
+                'total_price',
+                'quantity',
+                'foodItems'
+            )
+
+     def create(self, validated_data):
+        foodItems_data = validated_data.pop('foodItems')
+        order = Order.objects.create(**validated_data)
+        for foodItem_data in foodItems_data:
+            FoodItem.objects.create(order=order, **foodItem_data)
+        return order
+
+
 class BranchSerializer(serializers.ModelSerializer):
     foodItems = FoodItemSerializer(many=True)
-    #restaurent = serializers.CharField(source = "restaurent.name",read_only= True)
+    orders = OrderSerializers(many=True)
     class Meta:
         model = Branch
         fields = (
@@ -28,12 +49,14 @@ class BranchSerializer(serializers.ModelSerializer):
                   'address',
                   'pincode',
                   'foodItems',
+                  'orders'
                 )
     def create(self, validated_data):
         foodItems_data = validated_data.pop('foodItems')
+        order_data = validated_data.pop('orders')
         branch = Branch.objects.create(**validated_data)
         for foodItem_data in foodItems_data:
-            FoodItem.objects.create(branch=branch, **foodItem_data)
+            FoodItem.objects.create(branch=branch, **foodItem_data, ** order_data)
         return branch
                 
 class RestaurentSerializer(serializers.ModelSerializer):
@@ -50,3 +73,5 @@ class RestaurentSerializer(serializers.ModelSerializer):
         for branch_data in branches_data:
             Restaurent.objects.create(restaurent=restaurent, **branch_data)
         return restaurent
+
+

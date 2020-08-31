@@ -13,6 +13,7 @@ from accounts.models import UserProfile
 from service.models import FoodItem
 from rest_framework.views import APIView
 from service.serializers import FoodItemSerializer
+from django.http import Http404
 # Create your views here.
 
 
@@ -38,12 +39,17 @@ class UserRegistertionView(APIView):
 
 
 class UpdateFoodItemView(APIView):
+    def get_object(self, id):
+        try:
+            return FoodItem.objects.get(id=id)
+        except FoodItem.DoesNotExist:
+            raise Http404
 
     def put(self, request, id):
         is_branchOwner = request.data['is_branchOwner']
         if is_branchOwner:
             try:
-                instance = FoodItem.objects.select_related('branch').get(id = id)
+                instance = self.get_object(id)
             except FoodItem.DoesNotExist as e:
                 return Response({"error":"Given Food Item is not found"},status = 404)
             finalQuantity = request.data['quantity']

@@ -48,8 +48,6 @@ class PlaceOrder(APIView):
                     return Response({'error':'Given fooditem not found'},status = 404)
             total_price = 0
             for orderItem in data['orderList']:
-                print("orderFoodItem",orderFoodItem)
-                print("orderQuantity",orderQuantity)
                 orderFoodItem = orderItem['orderFoodItemId']
                 orderQuantity = orderItem['quantity']
                 instance = FoodItem.objects.select_related('branch').filter(branch_id=orderedBranch, id=orderFoodItem)

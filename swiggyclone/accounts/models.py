@@ -12,4 +12,4 @@ class UserProfile(models.Model):
     address = models.TextField(max_length=500, blank=True)
     mobile_number = models.CharField(max_length = 10,blank = True) 
     is_branchOwner = models.BooleanField(default=False)
-    branch = models.OneToOneField(Branch, on_delete=models.CASCADE,blank=True,null= True)
+    

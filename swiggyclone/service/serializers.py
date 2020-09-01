@@ -14,15 +14,13 @@ class OrderDiscriptionSerializers(serializers.ModelSerializer):
         feilds = (
                 'id',
                 'price',
-                'quantity',
-                
+                'quantity',   
             )
 
 
 
 class FoodItemSerializer(serializers.ModelSerializer):
-    #branch_name = serializers.CharField(source = "branch.name",read_only=True)
-    orderDiscriptions = OrderDiscriptionSerializers(many=True,read_only=True)
+    orderDiscriptions = OrderDiscriptionSerializers(many=True, read_only=True)
     class Meta:
         model = FoodItem
         fields = (
@@ -35,7 +33,7 @@ class FoodItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializers(serializers.ModelSerializer):
-    orderDiscriptions = OrderDiscriptionSerializers(many=True,read_only=True)
+    orderDiscriptions = OrderDiscriptionSerializers(many=True, read_only=True)
     class Meta:
         model = Order
         feilds = (
@@ -75,13 +73,14 @@ class BranchSerializer(serializers.ModelSerializer):
         for order_data in orders_data:
             Order.objects.create(branch=branch, ** order_data)
         return branch
-   
-                
+
+
 class RestaurentSerializer(serializers.ModelSerializer):
     branches = BranchSerializer(many=True)
     class Meta:
         model = Restaurent
-        fields = ('name',
+        fields = (
+                  'name',
                   'discription',
                   'branches',
                 )

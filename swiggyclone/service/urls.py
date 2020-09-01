@@ -9,8 +9,8 @@ from service.views import (
 
 
 urlpatterns = [
-    path('',PlaceOrder.as_view(),name = 'placeOrder'),
-    path('register/restaurent/',RestaurentRegistertionView.as_view(),name = 'restaurentRegistertionView'),
-    path('register/branch/',BranchRegistertionView.as_view(),name = 'branchRegistertionView'),
-    path('register/fooditem/',FoodItemRegistertionView.as_view(),name = 'foodItemRegistertionView')
+    path('', PlaceOrder.as_view(), name='placeOrder'),
+    path('register/restaurent/', RestaurentRegistertionView.as_view(), name='restaurentRegistertionView'),
+    path('register/branch/', BranchRegistertionView.as_view(), name='branchRegistertionView'),
+    path('register/fooditem/', FoodItemRegistertionView.as_view(), name='foodItemRegistertionView')
 ]

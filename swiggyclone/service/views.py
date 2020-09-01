@@ -50,19 +50,19 @@ class PlaceOrder(APIView):
                 instance = FoodItem.objects.select_related('branch').filter(branch_id=orderedBranch, id=orderFoodItem)
                 foodItemPrice = instance.first().price
                 finalQuantity = instance.first().quantity - orderQuantity
-                serializer = FoodItemSerializer(instance[0],data = {"quantity":finalQuantity},partial = True)
+                serializer = FoodItemSerializer(instance[0], data = {"quantity":finalQuantity}, partial = True)
                 if serializer.is_valid():
                     serializer.save()
                     total_price = total_price + orderQuantity*foodItemPrice
                 else:
                     return Response(serializer.errors,status = 400)
-            return Response({"message":"Order Placed","total Price":total_price},status = 200)
+            return Response({"message":"Order Placed", "total Price":total_price}, status = 200)
         else:
             return Response({"error: request is not in valid format"},status=400)
 
 class BranchRegistertionView(APIView):
 
-    def post(self,request):
+    def post(self, request):
         serializer = BranchSerializer(data=request.data)
         if serializer.is_valid(raise_exception=ValueError):
             serializer.save()
@@ -72,7 +72,7 @@ class BranchRegistertionView(APIView):
 
 class RestaurentRegistertionView(APIView):
 
-    def post(self,request):
+    def post(self, request):
         serializer = RestaurentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=ValueError):
             serializer.save()

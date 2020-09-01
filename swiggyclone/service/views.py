@@ -1,10 +1,13 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
 from rest_framework import status
 from rest_framework.parsers import JSONParser
-from django.http import JsonResponse
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from service.models import (
     Restaurent,
     Branch, 
@@ -20,9 +23,8 @@ from service.serializers import (
     OrderSerializers,
     OrderDiscriptionSerializers
     )
-from rest_framework.views import APIView
-from django.views.decorators.csrf import csrf_exempt
-from django.db import transaction
+
+
 
 # Create your views here.
 

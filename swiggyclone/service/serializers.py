@@ -6,15 +6,16 @@ from service.models import (
     Order,
     OrderDiscription
     )
-
+from accounts.serializers import UserSerializer
 class OrderDiscriptionSerializers(serializers.ModelSerializer):
+    # foodItem = serializers.CharField(source = "branch.name",read_only=True)
     class Meta:
         model = OrderDiscription
-        feilds = (
+        fields = (
                 'id',
                 'price',
                 'quantity',
-                
+                'foodItem'   
             )
 
 
@@ -38,7 +39,7 @@ class OrderSerializers(serializers.ModelSerializer):
     orderDiscriptions = OrderDiscriptionSerializers(many=True,read_only=True)
     class Meta:
         model = Order
-        feilds = (
+        fields = (
                 'id',
                 'order_time',
                 'total_price',

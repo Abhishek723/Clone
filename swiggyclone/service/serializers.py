@@ -7,6 +7,7 @@ from service.models import (
     OrderDiscription
     )
 
+
 class OrderDiscriptionSerializers(serializers.ModelSerializer):
     class Meta:
         model = OrderDiscription
@@ -31,7 +32,6 @@ class FoodItemSerializer(serializers.ModelSerializer):
                   'quantity',
                   'orderDiscriptions'
                 )
-
 
 
 class OrderSerializers(serializers.ModelSerializer):
@@ -75,6 +75,7 @@ class BranchSerializer(serializers.ModelSerializer):
         for order_data in orders_data:
             Order.objects.create(branch=branch, ** order_data)
         return branch
+   
                 
 class RestaurentSerializer(serializers.ModelSerializer):
     branches = BranchSerializer(many=True)

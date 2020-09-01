@@ -15,7 +15,6 @@ from service.models import (
     Order,
     OrderDiscription
     )
-
 from service.serializers import (
     FoodItemSerializer,
     RestaurentSerializer, 
@@ -23,10 +22,6 @@ from service.serializers import (
     OrderSerializers,
     OrderDiscriptionSerializers
     )
-
-
-
-# Create your views here.
 
 
 class PlaceOrder(APIView):

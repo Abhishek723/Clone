@@ -6,6 +6,8 @@ from service.views import (
     BranchRegistertionView,
     FoodItemRegistertionView
 )
+
+
 urlpatterns = [
     path('',PlaceOrder.as_view(),name = 'placeOrder'),
     path('register/restaurent/',RestaurentRegistertionView.as_view(),name = 'restaurentRegistertionView'),

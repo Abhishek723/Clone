@@ -15,8 +15,6 @@ from service.models import Branch
 from service.models import FoodItem
 from service.serializers import FoodItemSerializer
 
-# Create your views here.
-
 
 class UserRegistertionView(APIView):
 

@@ -21,7 +21,6 @@ class CustomerRegisterSerializer(serializers.ModelSerializer):
                   'is_branchOwner',
                 ) 
     def create(self, validated_data):
-        
         user_data = validated_data.pop('user')
         user = UserSerializer.create(UserSerializer(), validated_data=user_data)
         customer, created = UserProfile.objects.update_or_create(user=user,
@@ -42,7 +41,6 @@ class BranchOwnerRegisterSerializer(serializers.ModelSerializer):
                   'branch'
                 ) 
     def create(self, validated_data):
-        
         user_data = validated_data.pop('user')
         user = UserSerializer.create(UserSerializer(), validated_data=user_data)
         branchOwner, created = UserProfile.objects.update_or_create(user=user,

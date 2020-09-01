@@ -1,7 +1,6 @@
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from service.serializers import BranchSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):

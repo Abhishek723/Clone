@@ -1,9 +1,5 @@
 from django.urls import path,include
 from service.views import (
-    PlaceOrder,
-    RestaurentRegistertionView,
-    BranchRegistertionView,
-    FoodItemRegistertionView,
     RestaurentViewSet,
     BranchViewSet,
     FoodItemViewSet

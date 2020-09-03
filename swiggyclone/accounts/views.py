@@ -1,17 +1,13 @@
-from accounts.serializers import BranchOwnerRegisterSerializer,CustomerRegisterSerializer
-from accounts.models import UserProfile
-from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.http import Http404
 from rest_framework import serializers
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
-from service.models import Branch
+
+from accounts.serializers import BranchOwnerRegisterSerializer,CustomerRegisterSerializer
+from accounts.models import UserProfile
 from service.models import FoodItem
 from service.serializers import FoodItemSerializer
 

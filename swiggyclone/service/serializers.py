@@ -9,18 +9,28 @@ from service.models import (
 
 
 class OrderDiscriptionSerializers(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     class Meta:
         model = OrderDiscription
         feilds = (
                 'id',
                 'price',
-                'quantity',   
+                'quantity', 
+                'order_id',
+                'foodItem_id'  
             )
 
-
+    def validate(self, data):
+        orderFoodItem = data['foodItem']
+        orderFoodItemQuantity = data['quantity']
+        try:
+            instance = foodItem_id.quantity > orderFoodItemQuantity
+        except:
+            raise serializers.ValidationError('Given fooditem not found.')
 
 class FoodItemSerializer(serializers.ModelSerializer):
-    orderDiscriptions = OrderDiscriptionSerializers(many=True, read_only=True)
+    orderDiscriptions = OrderDiscriptionSerializers(many=True)
+    id = serializers.IntegerField(required=False)
     class Meta:
         model = FoodItem
         fields = (
@@ -28,25 +38,31 @@ class FoodItemSerializer(serializers.ModelSerializer):
                   'name',
                   'price',
                   'quantity',
-                  'orderDiscriptions'
+                  'orderDiscriptions',
+                  'branch_id'
                 )
 
 
 class OrderSerializers(serializers.ModelSerializer):
-    orderDiscriptions = OrderDiscriptionSerializers(many=True, read_only=True)
+    orderDiscriptions = OrderDiscriptionSerializers(many=True)
+    id = serializers.IntegerField(required=False)
     class Meta:
         model = Order
         feilds = (
                 'id',
                 'order_time',
                 'total_price',
-                'orderDiscriptions'
+                'orderDiscriptions',
+                'user_id',
+                'branch_id'
             )
 
     def create(self, validated_data):
         orderDiscriptions_data = validated_data.pop('orderDiscriptions')
         order = Order.objects.create(**validated_data)
         for orderDiscription_data in orderDiscriptions_data:
+            foodItem = orderDiscription_data['foodItem']
+            quantity = orderDiscription_data['quantity'] 
             OrderDiscription.objects.create(order=order, **orderDiscription_data)
         return order
 
@@ -54,6 +70,7 @@ class OrderSerializers(serializers.ModelSerializer):
 class BranchSerializer(serializers.ModelSerializer):
     foodItems = FoodItemSerializer(many=True)
     orders = OrderSerializers(many=True)
+    id = serializers.IntegerField(required=False)
     class Meta:
         model = Branch
         fields = (
@@ -63,6 +80,8 @@ class BranchSerializer(serializers.ModelSerializer):
                   'pincode',
                   'foodItems',
                   'orders',
+                  'restaurent_id',
+                  'branchOwner_id'
                 )
     def create(self, validated_data):
         foodItems_data = validated_data.pop('foodItems')
@@ -77,9 +96,11 @@ class BranchSerializer(serializers.ModelSerializer):
 
 class RestaurentSerializer(serializers.ModelSerializer):
     branches = BranchSerializer(many=True)
+    id = serializers.IntegerField(required=False)
     class Meta:
         model = Restaurent
         fields = (
+                  'id',
                   'name',
                   'discription',
                   'branches',
@@ -90,5 +111,6 @@ class RestaurentSerializer(serializers.ModelSerializer):
         for branch_data in branches_data:
             Branch.objects.create(restaurent=restaurent, **branch_data)
         return restaurent
+
 
 

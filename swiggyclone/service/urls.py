@@ -1,16 +1,31 @@
-from django.contrib import admin
 from django.urls import path,include
 from service.views import (
     PlaceOrder,
     RestaurentRegistertionView,
     BranchRegistertionView,
-    FoodItemRegistertionView
+    FoodItemRegistertionView,
+    RestaurentViewSet,
+    BranchViewSet,
+    FoodItemViewSet
 )
+
+from rest_framework.routers import SimpleRouter
+from rest_framework_nested import routers
+
+
+router = SimpleRouter()
+router.register('restaurent', RestaurentViewSet)
+
+restaurents_router = routers.NestedSimpleRouter(router, r'restaurent', lookup='restaurent')
+restaurents_router.register(r'branches',BranchViewSet)
+
+branches_router = routers.NestedSimpleRouter(restaurents_router, r'branches', lookup='branch')
+branches_router.register(r'foodItems',FoodItemViewSet)
+
 
 
 urlpatterns = [
-    path('', PlaceOrder.as_view(), name='placeOrder'),
-    path('register/restaurent/', RestaurentRegistertionView.as_view(), name='restaurentRegistertionView'),
-    path('register/branch/', BranchRegistertionView.as_view(), name='branchRegistertionView'),
-    path('register/fooditem/', FoodItemRegistertionView.as_view(), name='foodItemRegistertionView')
+    path('/', include(router.urls)),
+    path('/', include(restaurents_router.urls)),
+    path('/', include(branches_router.urls)),
 ]

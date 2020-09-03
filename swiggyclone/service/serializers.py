@@ -20,7 +20,13 @@ class OrderDiscriptionSerializers(serializers.ModelSerializer):
                 'foodItem_id'  
             )
 
-
+    def validate(self, data):
+        orderFoodItem = data['foodItem']
+        orderFoodItemQuantity = data['quantity']
+        try:
+            instance = foodItem_id.quantity > orderFoodItemQuantity
+        except:
+            raise serializers.ValidationError('Given fooditem not found.')
 
 class FoodItemSerializer(serializers.ModelSerializer):
     orderDiscriptions = OrderDiscriptionSerializers(many=True)
@@ -55,6 +61,8 @@ class OrderSerializers(serializers.ModelSerializer):
         orderDiscriptions_data = validated_data.pop('orderDiscriptions')
         order = Order.objects.create(**validated_data)
         for orderDiscription_data in orderDiscriptions_data:
+            foodItem = orderDiscription_data['foodItem']
+            quantity = orderDiscription_data['quantity'] 
             OrderDiscription.objects.create(order=order, **orderDiscription_data)
         return order
 
@@ -103,5 +111,6 @@ class RestaurentSerializer(serializers.ModelSerializer):
         for branch_data in branches_data:
             Branch.objects.create(restaurent=restaurent, **branch_data)
         return restaurent
+
 
 

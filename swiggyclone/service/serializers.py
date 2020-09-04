@@ -23,7 +23,6 @@ class OrderDiscriptionSerializers(serializers.ModelSerializer):
 
 class FoodItemSerializer(serializers.ModelSerializer):
     orderDiscriptions = OrderDiscriptionSerializers(many=True,required=False)
-    id = serializers.IntegerField(required=False)
     class Meta:
         model = FoodItem
         fields = (
@@ -32,7 +31,7 @@ class FoodItemSerializer(serializers.ModelSerializer):
                   'price',
                   'quantity',
                   'orderDiscriptions',
-                  'branch'
+                  
                 )
 
 

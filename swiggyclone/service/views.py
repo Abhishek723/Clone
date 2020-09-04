@@ -72,7 +72,13 @@ class BranchViewSet(viewsets.ModelViewSet):
                     else:
                         return Response(update_serializer.errors,status = 400)
                 data["user"] = request.user
-                orderSerializers.save()
+                data["total_price"] = total_price
+                finalOrderSerializer = OrderSerializers(data=data)
+                if finalOrderSerializer.is_valid():   
+                    finalOrderSerializer.save()
+                else:
+                    orderValid = False
+                    return Response(orderSerializers.errors,status = 404)
         else:
             orderValid = False
             return Response(orderSerializers.errors,status = 404)

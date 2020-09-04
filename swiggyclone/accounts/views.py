@@ -10,9 +10,9 @@ class UserProfileListCreateView(ListCreateAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        user = self.request.user
-        serializer.save(user=user)
+    def create(self, validated_data):
+        validated_data['user'] = self.request.user
+        return super(UserProfileListCreateView, self).create(validated_data)
 
 
 class UserProfileDetailView(RetrieveUpdateDestroyAPIView):

@@ -1,11 +1,5 @@
 from django.contrib import admin
-from service.models import (
-    Restaurent,
-    Branch, 
-    FoodItem, 
-    Order, 
-    OrderDiscription
-    )
+from service.models import Restaurent, Branch, FoodItem, Order, OrderDiscription
 
 
 admin.site.register(Branch)

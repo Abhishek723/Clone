@@ -1,38 +1,18 @@
 from rest_framework import serializers
-from service.models import (
-    Restaurent,
-    Branch, 
-    FoodItem, 
-    Order,
-    OrderDiscription
-    )
+from service.models import Restaurent, Branch, FoodItem, Order, OrderDiscription
 
 
 class OrderDiscriptionSerializers(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     class Meta:
         model = OrderDiscription
-        fields = (
-                'id',
-                'price',
-                'quantity', 
-                'foodItem'  
-            )
-
-    
+        fields = ['id', 'price', 'quantity', 'foodItem']
 
 class FoodItemSerializer(serializers.ModelSerializer):
     orderDiscriptions = OrderDiscriptionSerializers(many=True,required=False)
     class Meta:
         model = FoodItem
-        fields = (
-                  'id',
-                  'name',
-                  'price',
-                  'quantity',
-                  'orderDiscriptions',
-                  
-                )
+        fields = ['id', 'name', 'price', 'quantity', 'orderDiscriptions']
 
 
 class OrderSerializers(serializers.ModelSerializer):
@@ -40,13 +20,7 @@ class OrderSerializers(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     class Meta:
         model = Order
-        fields = (
-                'id',
-                'order_time',
-                'total_price',
-                'orderDiscriptions',
-                'branch'
-            )
+        fields = ['id', 'order_time', 'total_price', 'orderDiscriptions', 'branch']
 
     def create(self, validated_data):
         orderDiscriptions_data = validated_data.pop('orderDiscriptions')
@@ -57,34 +31,13 @@ class OrderSerializers(serializers.ModelSerializer):
             OrderDiscription.objects.create(order=order, **orderDiscription_data)
         return order
 
-
 class BranchSerializer(serializers.ModelSerializer):
-    
-   
     class Meta:
         model = Branch
-        fields = (
-                  'id',
-                  'name',
-                  'address',
-                  'pincode',    
-                  'branchOwner',
-                  'restaurent'
-                )
+        fields = ['id', 'name', 'address', 'pincode', 'branchOwner', 'restaurent']
     
-
 
 class RestaurentSerializer(serializers.ModelSerializer):
-    
-   
     class Meta:
         model = Restaurent
-        fields = (
-                  'id',
-                  'name',
-                  'discription',
-                )
-    
-
-
-
+        fields = ['id', 'name', 'discription']

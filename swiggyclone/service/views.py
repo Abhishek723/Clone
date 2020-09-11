@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -30,6 +31,7 @@ class BranchViewSet(viewsets.ModelViewSet):
         return context
 
     @action(detail=True, methods=['POST'])
+    @transaction.atomic
     def placeOrder(self, request, pk, restaurent_pk):
         data = request.data
         data["user"] = request.user

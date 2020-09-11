@@ -14,7 +14,7 @@ class Restaurent(models.Model):
 class Branch(models.Model):
     name = models.CharField(max_length=200)
     address = models.TextField(max_length=500)
-    restaurent = models.ForeignKey('service.Restaurent', related_name='branches', on_delete=models.CASCADE)
+    restaurent = models.ForeignKey(Restaurent, related_name='branches', on_delete=models.CASCADE)
     branchOwner = models.ForeignKey(User, related_name='branches', on_delete=models.CASCADE)
     pincode = models.CharField(max_length=6)
 
@@ -24,23 +24,23 @@ class Branch(models.Model):
 
 class FoodItem(models.Model):
     name = models.CharField(max_length=200)
-    price = models.IntegerField()
-    quantity = models.IntegerField()
-    branch = models.ForeignKey('service.Branch', related_name='foodItems', on_delete=models.CASCADE)
+    price = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField()
+    branch = models.ForeignKey(Branch, related_name='foodItems', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, related_name='orders', null=True, blank=True, on_delete=models.CASCADE)
-    branch = models.ForeignKey('service.Branch', related_name='orders', on_delete=models.CASCADE)
-    order_time = models.DateTimeField(default=timezone.now, null=True, blank=True)
-    total_price = models.IntegerField(default=0)
+    user = models.ForeignKey(User, related_name='orders', on_delete=models.CASCADE)
+    branch = models.ForeignKey(Branch, related_name='orders', on_delete=models.CASCADE)
+    order_time = models.DateTimeField(default=timezone.now)
+    total_price = models.PositiveIntegerField()
 
 
 class OrderDiscription(models.Model):
-    order = models.ForeignKey('service.Order', related_name='orderDiscriptions', on_delete=models.CASCADE)
-    foodItem = models.ForeignKey('service.FoodItem', related_name='orderDiscriptions', on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    price = models.IntegerField()
+    order = models.ForeignKey(Order, related_name='orderDiscriptions', on_delete=models.CASCADE)
+    foodItem = models.ForeignKey(FoodItem, related_name='orderDiscriptions', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    price = models.PositiveIntegerField()

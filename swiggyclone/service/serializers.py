@@ -8,6 +8,15 @@ class FoodItemSerializer(serializers.ModelSerializer):
         model = FoodItem
         fields = ['id', 'name', 'price', 'quantity']
 
+    def create(self, validated_data):
+        try:
+            int(self.context.get("branch"))
+        except ValueError:
+            raise serializers.ValidationError({"detail": "input is not valid"})
+
+        validated_data['branch_id'] = self.context.get("branch",None)
+        foodItem = FoodItem.objects.create(**validated_data)
+        return foodItem
 
 class OrderDiscriptionSerializers(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
@@ -62,6 +71,16 @@ class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
         fields = ['id', 'name', 'address', 'pincode', 'branchOwner']
+
+    def create(self, validated_data):
+        try:
+            int(self.context.get('restaurent'))
+        except ValueError:
+            raise serializers.ValidationError({"detail": "input is not valid"})
+        validated_data['restaurent_id'] = self.context.get("restaurent",None)
+        branch = Branch.objects.create(**validated_data)
+        return branch
+
 
 
 class RestaurentSerializer(serializers.ModelSerializer):

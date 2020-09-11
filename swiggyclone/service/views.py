@@ -17,10 +17,17 @@ class BranchViewSet(viewsets.ModelViewSet):
     serializer_class = BranchSerializer
 
     def get_queryset(self):
-        return Branch.objects.filter(restaurent_id=self.kwargs['restaurent_pk'])
+        restaurent = self.kwargs['restaurent_pk']
+        try:
+            int(restaurent)
+            return Branch.objects.filter(restaurent_id=self.kwargs['restaurent_pk'])
+        except ValueError:
+            return Branch.objects.filter(restaurent_id=None)
 
-    def perform_create(self, serializer):
-        serializer.save(restaurent_id=self.kwargs['restaurent_pk'])
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['restaurent'] = self.kwargs['restaurent_pk']
+        return context
 
     @action(detail=True, methods=['POST'])
     def placeOrder(self, request, pk, restaurent_pk):
@@ -28,18 +35,27 @@ class BranchViewSet(viewsets.ModelViewSet):
         data["user"] = request.user
         data['branch'] = self.kwargs['pk']
         serializer = OrderSerializers(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response("Order Placed", status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response("Order Placed", status=status.HTTP_200_OK)
 
 
 class FoodItemViewSet(viewsets.ModelViewSet):
     serializer_class = FoodItemSerializer
 
-    def get_queryset(self):
-        return FoodItem.objects.filter(branch_id=self.kwargs['branch_pk'])
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['branch'] = self.kwargs['branch_pk']
+        return context
 
-    def perform_create(self, serializer):
-        serializer.save(branch_id=self.kwargs['branch_pk'])
+    def get_queryset(self):
+        branch = self.kwargs['branch_pk']
+        restaurent = self.kwargs['restaurent_pk']
+        try:
+            int(branch)
+            int(restaurent)
+            return FoodItem.objects.filter(branch_id=self.kwargs['branch_pk'])
+        except ValueError:
+            return FoodItem.objects.filter(branch_id=None)
+
+

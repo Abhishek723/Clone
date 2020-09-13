@@ -34,7 +34,7 @@ class BranchViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def placeOrder(self, request, pk, restaurent_pk):
         data = request.data
-        data["user"] = request.user
+        data["user"] = request.user.id
         data['branch'] = self.kwargs['pk']
         serializer = OrderSerializers(data=data)
         serializer.is_valid(raise_exception=True)

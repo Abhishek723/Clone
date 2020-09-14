@@ -1,9 +1,9 @@
-from accounts.views import UserRegistertionView,UpdateFoodItemView
-from django.contrib import admin
-from django.urls import path,include
+from django.urls import include, path
+
+from .views import UserProfileListCreateView, UserProfileDetailView
 
 
 urlpatterns = [
-    path('BranchOwner/update/fooditems/<int:id>/edit', UpdateFoodItemView().as_view(), name = 'updateFoodItem'),
-    path('register/', UserRegistertionView().as_view(), name = 'userRegistration'),
+    path("all-profiles", UserProfileListCreateView.as_view(), name="all-profiles"),
+    path("profile/<int:pk>", UserProfileDetailView.as_view(), name="profile"),
 ]

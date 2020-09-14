@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from service.models import Restaurent, Branch, FoodItem, Order, OrderDiscription
+from service.permissions import IsOwnerOrReadOnly
 from service.serializers import FoodItemSerializer, RestaurentSerializer, BranchSerializer, OrderSerializers, \
     OrderDiscriptionSerializers
 
@@ -44,6 +45,7 @@ class BranchViewSet(viewsets.ModelViewSet):
 
 class FoodItemViewSet(viewsets.ModelViewSet):
     serializer_class = FoodItemSerializer
+    permission_classes = [IsOwnerOrReadOnly]
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

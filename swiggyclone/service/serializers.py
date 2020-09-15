@@ -70,14 +70,16 @@ class OrderSerializers(serializers.ModelSerializer):
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
-        fields = ['id', 'name', 'address', 'pincode', 'branchOwner']
+        fields = ['id', 'name', 'address', 'pincode']
 
     def create(self, validated_data):
         try:
             int(self.context.get('restaurent'))
         except ValueError:
             raise serializers.ValidationError({"detail": "input is not valid"})
+        request = self.context.get('request', None)
         validated_data['restaurent_id'] = self.context.get("restaurent",None)
+        validated_data['branchOwner'] = request.user
         branch = Branch.objects.create(**validated_data)
         return branch
 

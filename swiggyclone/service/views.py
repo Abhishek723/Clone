@@ -1,13 +1,11 @@
 from django.db import transaction
-from rest_framework import viewsets
 from rest_framework import status
-from rest_framework.response import Response
+from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
-from service.models import Restaurent, Branch, FoodItem, Order, OrderDiscription
-from service.permissions import IsOwnerOrReadOnly
-from service.serializers import FoodItemSerializer, RestaurentSerializer, BranchSerializer, OrderSerializers, \
-    OrderDiscriptionSerializers
+from service.models import Restaurent, Branch, FoodItem
+from service.serializers import FoodItemSerializer, RestaurentSerializer, BranchSerializer, OrderSerializers
 
 
 class RestaurentViewSet(viewsets.ModelViewSet):
@@ -20,11 +18,7 @@ class BranchViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         restaurent = self.kwargs['restaurent_pk']
-        try:
-            int(restaurent)
-            return Branch.objects.filter(restaurent_id=self.kwargs['restaurent_pk'])
-        except ValueError:
-            return Branch.objects.filter(restaurent_id=None)
+        return Branch.objects.filter(restaurent_id=self.kwargs['restaurent_pk'])
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -33,19 +27,24 @@ class BranchViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['POST'])
     @transaction.atomic
-    def placeOrder(self, request, pk, restaurent_pk):
+    def place_order(self, request, pk, restaurent_pk):
         data = request.data
         data["user"] = request.user.id
         data['branch'] = self.kwargs['pk']
-        serializer = OrderSerializers(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response("Order Placed", status=status.HTTP_200_OK)
+        try:
+            with transaction.atomic():
+                serializer = OrderSerializers(data=data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response("Order Placed", status=status.HTTP_200_OK)
+        except Exception as exception:
+            return Response({'result': 'Order failed, please try again.'},
+                            status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
 
 
 class FoodItemViewSet(viewsets.ModelViewSet):
     serializer_class = FoodItemSerializer
-    permission_classes = [IsOwnerOrReadOnly]
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -55,11 +54,4 @@ class FoodItemViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         branch = self.kwargs['branch_pk']
         restaurent = self.kwargs['restaurent_pk']
-        try:
-            int(branch)
-            int(restaurent)
-            return FoodItem.objects.filter(branch_id=self.kwargs['branch_pk'])
-        except ValueError:
-            return FoodItem.objects.filter(branch_id=None)
-
-
+        return FoodItem.objects.filter(branch_id=self.kwargs['branch_pk'])
